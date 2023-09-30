@@ -12,7 +12,7 @@ import {
 } from 'react-icons/fa'
 
 import useDeleteDialog from '@/hooks/useDeleteDialog'
-import useProductModal from '@/hooks/useProductModal'
+import useUserModal from '@/hooks/useUserModal'
 import { cn, formatCurr } from '@/lib/utils'
 
 import ActionButton from '@/components/ActionButton'
@@ -22,7 +22,7 @@ import ContentTitle from '@/components/dashboard/ContentTitle'
 import MainWrapper from '@/components/dashboard/MainWrapper'
 import { RenderIf } from '@/components/RenderIf'
 
-const columns = (productModal, deleteDialog) => {
+const columns = (userModal, deleteDialog) => {
   return [
     {
       name: 'No',
@@ -32,18 +32,19 @@ const columns = (productModal, deleteDialog) => {
       width: '50px',
     },
     {
-      name: 'Nama Produk',
+      name: 'Nama Lengkap',
       selector: (row) => row.name,
       sortable: true,
     },
     {
-      name: 'Harga (IDR)',
-      selector: (row) => row.price,
-      format: (row) => {
-        return formatCurr(row.price);
-      },
+      name: 'Email',
+      selector: (row) => row.email,
       sortable: true,
-      right: 'true',
+    },
+    {
+      name: 'No. Telepon',
+      selector: (row) => row.hpne,
+      sortable: true,
     },
     {
       name: 'Status',
@@ -63,13 +64,13 @@ const columns = (productModal, deleteDialog) => {
           <ActionButton
             allowView={false}
             onEdit={() => {
-              productModal.detail = row;
-              productModal.setEdit();
-              productModal.onOpen();
+              userModal.detail = row;
+              userModal.setEdit();
+              userModal.onOpen();
             }}
             onDelete={() => {
               deleteDialog.detail = row;
-              deleteDialog.api = '/api/products/';
+              deleteDialog.api = '/api/users/';
               deleteDialog.onOpen();
             }}
           />
@@ -79,48 +80,50 @@ const columns = (productModal, deleteDialog) => {
   ];
 };
 
-const ProductPage = () => {
-  const productModal = useProductModal();
+const UserPage = () => {
+  const userModal = useUserModal();
   const deleteDialog = useDeleteDialog();
 
   const { data, isLoading, isError, refetch } = useQuery({
-    queryKey: ['products'],
+    queryKey: ['users'],
     queryFn: async () => {
-      const { data } = await axios.get('/api/products');
+      const { data } = await axios.get('/api/users');
       return data;
     },
   });
 
   useEffect(() => {
-    if (productModal.hasUpdate || deleteDialog.hasUpdate) {
+    if (userModal.hasUpdate || deleteDialog.hasUpdate) {
       refetch();
-      productModal.closeUpdate();
+      userModal.closeUpdate();
     }
 
     return () => {
-      productModal.closeUpdate();
+      userModal.closeUpdate();
       deleteDialog.closeUpdate();
     };
-  }, [productModal.hasUpdate, deleteDialog.hasUpdate]);
+  }, [userModal.hasUpdate, deleteDialog.hasUpdate]);
 
   return (
     <MainWrapper>
       <ContentTitle
-        title="Manajemen Produk"
-        actionLabel="TAMBAH PRODUK"
-        actionHandler={() => productModal.onOpen()}
+        title="Manajemen User"
+        actionLabel="TAMBAH USER"
+        actionHandler={() => userModal.onOpen()}
       />
 
       <Card className="p-0 mt-4">
         <RenderIf isTrue={isLoading}>
-          <div className="w-full text-center p-6">Memuat data produk...</div>
+          <div className="w-full text-center p-6">Memuat data user...</div>
         </RenderIf>
         <RenderIf isTrue={isError}>
-          Terjadi kesalahan, silahkan coba lagi!
+          <div className="w-full text-center p-6 text-rose-500">
+            Terjadi kesalahan, silahkan coba lagi!
+          </div>
         </RenderIf>
         <RenderIf isTrue={!isLoading && !isError && data !== undefined}>
           <DataTable
-            columns={columns(productModal, deleteDialog)}
+            columns={columns(userModal, deleteDialog)}
             data={data?.data}
             pagination
             striped
@@ -131,4 +134,4 @@ const ProductPage = () => {
   );
 };
 
-export default ProductPage;
+export default UserPage;

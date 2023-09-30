@@ -23,7 +23,7 @@ const DeleteModal = () => {
     setIsLoading(true);
 
     axios
-      .delete('/api/products/' + deleteDialog?.detail._id)
+      .delete(deleteDialog.api + deleteDialog?.detail._id)
       .then((res) => {
         const { code, data, message } = res.data;
         if (code === HttpStatusCode.Ok) {

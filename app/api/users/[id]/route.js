@@ -2,7 +2,7 @@ import { NextResponse } from 'next/server'
 
 import { HttpStatusCode } from 'axios'
 
-import Product from '@/config/database/models/product'
+import User from '@/config/database/models/user'
 import { verifyAdmin } from '@/config/middleware/guardRoute'
 import { createResponse } from '@/config/utils/success'
 
@@ -10,7 +10,7 @@ export async function GET(req, { params }) {
   try {
     const { id } = params;
 
-    const res = await Product.findById(id);
+    const res = await User.findById(id);
 
     return NextResponse.json(createResponse('Berhasil', res));
   } catch (error) {
@@ -36,13 +36,13 @@ export async function DELETE(req, { params }) {
       );
     }
 
-    const isProductExist = await Product.findById(id);
+    const isUserExist = await User.findById(id);
 
-    if (!isProductExist) {
-      return NextResponse.json(createResponse('Produk tidak ditemukan', null));
+    if (!isUserExist) {
+      return NextResponse.json(createResponse('User tidak ditemukan', null));
     }
 
-    const deletedProduct = await Product.findByIdAndUpdate(
+    const deletedUser = await User.findByIdAndUpdate(
       id,
       { isDeleted: true, isActive: false },
       {
@@ -51,7 +51,7 @@ export async function DELETE(req, { params }) {
     );
 
     return NextResponse.json(
-      createResponse('Berhasil menghapus produk', deletedProduct)
+      createResponse('Berhasil menghapus user', deletedUser)
     );
   } catch (error) {
     return NextResponse.json(
@@ -77,20 +77,20 @@ export async function PUT(req, { params }) {
       );
     }
 
-    const isProductExist = await Product.findById(id);
+    const isUserExist = await User.findById(id);
 
-    if (!isProductExist) {
-      return NextResponse.json(createResponse('Produk tidak ditemukan', null));
+    if (!isUserExist) {
+      return NextResponse.json(createResponse('User tidak ditemukan', null));
     }
 
-    const updatedProduct = await Product.findByIdAndUpdate(
+    const updatedUser = await User.findByIdAndUpdate(
       id,
       { $set: body },
       { new: true }
     );
 
     return NextResponse.json(
-      createResponse('Berhasil mengubah data produk', updatedProduct)
+      createResponse('Berhasil mengubah data user', updatedUser)
     );
   } catch (error) {
     console.log('er', error);

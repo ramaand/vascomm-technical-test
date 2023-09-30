@@ -30,7 +30,7 @@ export const authOptions = {
         try {
           await connectMongoDB();
 
-          const user = await User.findOne({ email });
+          const user = await User.findOne({ email, isActive: true });
 
           if (!user) return null;
 

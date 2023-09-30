@@ -6,7 +6,7 @@ import nodemailer from 'nodemailer'
 
 import { connectMongoDB } from '@/config/database/connection'
 import User from '@/config/database/models/user'
-import { userSchema } from '@/config/database/schemas/user.schema'
+import { userSchema } from '@/config/database/schemas/user'
 import { validateMiddleware } from '@/config/middleware/validateSchema'
 import { generatedRandomPassword } from '@/lib/utils'
 
