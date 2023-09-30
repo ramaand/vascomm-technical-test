@@ -1,6 +1,11 @@
 'use client';
 
-import { useCallback, useState } from 'react'
+import {
+  useCallback,
+  useEffect,
+  useMemo,
+  useState,
+} from 'react'
 
 import { signIn } from 'next-auth/react'
 
@@ -27,6 +32,11 @@ const ProductModal = () => {
 
   const [isLoading, setIsLoading] = useState(false);
 
+  const isCreate = useMemo(
+    () => productModal.isCreate,
+    [productModal.isCreate]
+  );
+
   const {
     register,
     handleSubmit,
@@ -42,6 +52,17 @@ const ProductModal = () => {
     },
   });
 
+  useEffect(() => {
+    if (productModal.detail) {
+      setCustomValue('name', productModal.detail?.name);
+      setCustomValue('price', productModal.detail?.price);
+      setCustomValue('imageSrc', productModal.detail?.imageSrc);
+    }
+    return () => {
+      reset();
+    };
+  }, [productModal.detail]);
+
   const imageSrc = watch('imageSrc');
 
   const setCustomValue = (id, value) => {
@@ -55,14 +76,16 @@ const ProductModal = () => {
   const onSubmit = (data) => {
     setIsLoading(true);
 
-    console.log('SUBMIT', data);
-    axios
-      .post('/api/products', data)
+    axios[isCreate ? 'post' : 'put'](
+      isCreate ? '/api/products' : '/api/products/' + productModal.detail._id,
+      data
+    )
       .then((res) => {
         const { code, data, message } = res.data;
         if (code === HttpStatusCode.Ok) {
           toast.success(message);
           reset();
+          productModal.openUpdate();
           productModal.onClose();
         } else {
           toast.error(message);
@@ -81,6 +104,7 @@ const ProductModal = () => {
       <Input
         id="name"
         label="Nama Produk"
+        placeholder="Nama Produk"
         disabled={isLoading}
         register={register}
         errors={errors}
@@ -108,7 +132,7 @@ const ProductModal = () => {
     <Modal
       disabled={isLoading}
       isOpen={productModal.isOpen}
-      title="Tambah User"
+      title={isCreate ? 'Tambah Produk' : 'Ubah Data Produk'}
       actionLabel="SIMPAN"
       onClose={productModal.onClose}
       onSubmit={handleSubmit(onSubmit)}

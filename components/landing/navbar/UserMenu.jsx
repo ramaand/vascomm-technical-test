@@ -27,14 +27,16 @@ const UserMenu = ({ currentUser }) => {
         <div className="flex flex-row items-center justify-end gap-3 ">
           <div
             onClick={toggleOpen}
-            className="flex flex-col items-end cursor-pointer"
+            className="flex flex-row items-center justify-end gap-3 cursor-pointer"
           >
-            <div className="text-blue-500 text-sm">
-              Hello {currentUser?.role}
+            <div className="flex flex-col items-end">
+              <div className="text-blue-500 text-sm">
+                Hello {currentUser?.role}
+              </div>
+              <div className="font-semibold">{currentUser?.name}</div>
             </div>
-            <div className="font-semibold">{currentUser?.name}</div>
+            <Avatar height={48} width={48} />
           </div>
-          <Avatar height={48} width={48} />
         </div>
       </RenderIf>
 

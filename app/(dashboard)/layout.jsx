@@ -6,6 +6,7 @@ import getCurrentUser from '@/actions/getCurrentUser'
 
 import AdminNavbar from '@/components/dashboard/navbar/Navbar'
 import Sidebar from '@/components/dashboard/sidebar/Sidebar'
+import DeleteModal from '@/components/dialogs/DeleteDialog'
 import ProductModal from '@/components/modals/ProductModal'
 
 const mont = Montserrat({ subsets: ['latin'] });
@@ -16,6 +17,7 @@ const DashboardLayout = async ({ children }) => {
   return (
     <>
       <ProductModal />
+      <DeleteModal />
       <div className={`h-full relative ${mont.className}`}>
         <AdminNavbar currentUser={currentUser} />
 

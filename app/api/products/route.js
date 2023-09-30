@@ -12,7 +12,7 @@ import { createResponse } from '@/config/utils/success'
 
 export async function GET() {
   try {
-    const res = await Product.find();
+    const res = await Product.find({ isDeleted: { $ne: true } });
 
     return NextResponse.json(
       createResponse('Berhasil mengambil daftar produk', res)
@@ -46,7 +46,7 @@ export async function POST(req) {
 
     return NextResponse.json(createResponse('Data produk berhasil disimpan'));
   } catch (error) {
-    console.log("error", error)
+    console.log('error', error);
     return NextResponse.json(
       createResponse(
         'Terjadi kesalahan!',
