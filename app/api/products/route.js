@@ -10,9 +10,19 @@ import { verifyAdmin } from '@/config/middleware/guardRoute'
 import { validateMiddleware } from '@/config/middleware/validateSchema'
 import { createResponse } from '@/config/utils/success'
 
-export async function GET() {
+export async function GET(req) {
   try {
-    const res = await Product.find({ isDeleted: { $ne: true } });
+    const url = new URL(req.url);
+    const skipCount = url.searchParams.get('skip');
+    const takeCount = url.searchParams.get('take');
+
+    await connectMongoDB();
+    let res = await Product.find({ isDeleted: { $ne: true } });
+    if (skipCount || takeCount) {
+      res = await Product.find({ isDeleted: { $ne: true } })
+        .skip(parseInt(skipCount))
+        .limit(parseInt(takeCount));
+    }
 
     return NextResponse.json(
       createResponse('Berhasil mengambil daftar produk', res)
